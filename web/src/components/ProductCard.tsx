@@ -3,9 +3,11 @@ import { ArrowTopRightOnSquareIcon, CheckBadgeIcon } from "@heroicons/react/24/o
 import clsx from "clsx";
 import { CTAButton } from "./CTAButton";
 import type { ProductOffer } from "../types";
+import type { MouseEventHandler } from "react";
 
 interface ProductCardProps {
   offer: ProductOffer;
+  onCTAClick: MouseEventHandler<HTMLAnchorElement>;
 }
 
 const toneClasses: Record<ProductOffer["tone"], string> = {
@@ -17,7 +19,7 @@ const toneClasses: Record<ProductOffer["tone"], string> = {
     "bg-surface-dark text-white ring-white/10 [&_.muted]:text-white/80",
 };
 
-export function ProductCard({ offer }: ProductCardProps) {
+export function ProductCard({ offer, onCTAClick }: ProductCardProps) {
   const supportClasses =
     offer.tone === "light"
       ? "border border-slate-200 bg-slate-50 text-slate-700"
@@ -80,9 +82,8 @@ export function ProductCard({ offer }: ProductCardProps) {
         >
           <p className="muted md:max-w-2xl">{offer.support}</p>
           <CTAButton
-            href={offer.cta.href}
-            target="_blank"
-            rel="noreferrer"
+            href="#"
+            onClick={onCTAClick}
             className="w-full justify-center md:w-auto"
             icon={<ArrowTopRightOnSquareIcon className="h-4 w-4" />}
           >
