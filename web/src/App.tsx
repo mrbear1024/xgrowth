@@ -19,13 +19,25 @@ import {
 } from "./content";
 
 const WECHAT_QR_URL = "https://images.xlearnity.ai/Weixin%20Image_20251024140317_10_303.jpg";
-
+const COURSE_XIAOBOT_URL = "https://xiaobot.net/p/cs101";
+const COURSE_XIAOBOT_IMAGE_URL = "https://images.xlearnity.ai/5OK.png";
 function App() {
   const [isWeChatModalOpen, setIsWeChatModalOpen] = useState(false);
   const [activeSocialProofIndex, setActiveSocialProofIndex] = useState<number | null>(null);
+  const [modalImageSrc, setModalImageSrc] = useState(COURSE_XIAOBOT_IMAGE_URL);
+  const [modalImageAlt, setModalImageAlt] = useState("立即加入课程二维码");
+
+  const handleCourseCTAClick: MouseEventHandler<HTMLAnchorElement> = (event) => {
+    event.preventDefault();
+    setModalImageSrc(COURSE_XIAOBOT_IMAGE_URL);
+    setModalImageAlt("立即加入课程二维码");
+    setIsWeChatModalOpen(true);
+  };
 
   const handleWeChatCTAClick: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
+    setModalImageSrc(WECHAT_QR_URL);
+    setModalImageAlt("企业微信二维码");
     setIsWeChatModalOpen(true);
   };
 
@@ -47,7 +59,7 @@ function App() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <CTAButton href="#" onClick={handleWeChatCTAClick}>
+            <CTAButton href="#" onClick={handleCourseCTAClick}>
               {navCtaLinks[0].label}
             </CTAButton>
             <CTAButton variant="secondary" href="#" onClick={handleWeChatCTAClick} icon={<PlayIcon className="h-4 w-4" />}>
@@ -58,19 +70,24 @@ function App() {
       </header>
 
       <main>
-        <Hero onWeChatTrigger={handleWeChatCTAClick} />
+        <Hero onJoinTrigger={handleCourseCTAClick} onLearnMoreTrigger={handleWeChatCTAClick} />
         <About />
         <PainPoints />
-        <SystemOverview onWeChatTrigger={handleWeChatCTAClick} />
-        <ProductShowcase onWeChatTrigger={handleWeChatCTAClick} />
+        <SystemOverview onCTATrigger={handleCourseCTAClick} />
+        <ProductShowcase onCTATrigger={handleCourseCTAClick} />
         <SocialProof onImageOpen={openSocialProofModal} />
-        <FinalCTA onWeChatTrigger={handleWeChatCTAClick} />
+        <FinalCTA onJoinTrigger={handleCourseCTAClick} onConsultTrigger={handleWeChatCTAClick} />
         <FAQ />
         <Contact />
       </main>
 
       <SocialProofModal images={socialProofImages} activeIndex={activeSocialProofIndex} onClose={handleCloseSocialProofModal} />
-      <WeChatModal isOpen={isWeChatModalOpen} onClose={handleCloseWeChatModal} />
+      <WeChatModal
+        isOpen={isWeChatModalOpen}
+        onClose={handleCloseWeChatModal}
+        imageSrc={modalImageSrc}
+        imageAlt={modalImageAlt}
+      />
 
       <footer className="border-t border-white/10 bg-black/70">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -113,7 +130,13 @@ function App() {
   );
 }
 
-function Hero({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandler<HTMLAnchorElement> }) {
+function Hero({
+  onJoinTrigger,
+  onLearnMoreTrigger,
+}: {
+  onJoinTrigger: MouseEventHandler<HTMLAnchorElement>;
+  onLearnMoreTrigger: MouseEventHandler<HTMLAnchorElement>;
+}) {
   return (
     <motion.section
       className="relative overflow-hidden bg-surface-dark"
@@ -153,13 +176,13 @@ function Hero({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandler<HTMLAnch
             通过实战复盘、系统方法和高能社群，构建可持续的内容增长机器。让粉丝增长、品牌打造与变现进入复利循环。
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <CTAButton href="#" onClick={onWeChatTrigger} className="w-full justify-center sm:w-auto">
+            <CTAButton href="#" onClick={onJoinTrigger} className="w-full justify-center sm:w-auto">
               {navCtaLinks[0].label}
             </CTAButton>
             <CTAButton
               variant="secondary"
               href="#"
-              onClick={onWeChatTrigger}
+              onClick={onLearnMoreTrigger}
               className="w-full justify-center sm:w-auto"
               icon={<PlayIcon className="h-4 w-4" />}
             >
@@ -279,7 +302,7 @@ function PainPoints() {
   );
 }
 
-function SystemOverview({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandler<HTMLAnchorElement> }) {
+function SystemOverview({ onCTATrigger }: { onCTATrigger: MouseEventHandler<HTMLAnchorElement> }) {
   return (
     <Section background="bg-surface-light" className="text-slate-900">
       <div className="relative">
@@ -327,7 +350,7 @@ function SystemOverview({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandle
           <div className="w-full rounded-3xl border border-slate-200 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-10 text-white">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <h3 className="text-2xl font-semibold">90 天启动你的 X 增长飞轮</h3>
-              <CTAButton href="#" onClick={onWeChatTrigger} className="w-full justify-center md:w-auto">
+              <CTAButton href="#" onClick={onCTATrigger} className="w-full justify-center md:w-auto">
                 获取 90 天执行手册
               </CTAButton>
             </div>
@@ -359,7 +382,7 @@ function SystemOverview({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandle
   );
 }
 
-function ProductShowcase({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandler<HTMLAnchorElement> }) {
+function ProductShowcase({ onCTATrigger }: { onCTATrigger: MouseEventHandler<HTMLAnchorElement> }) {
   return (
     <Section background="bg-slate-950">
       <div className="relative">
@@ -389,7 +412,7 @@ function ProductShowcase({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandl
         </div>
         <div className="mt-16 space-y-12">
           {productOffers.map((offer) => (
-            <ProductCard key={offer.id} offer={offer} onCTAClick={onWeChatTrigger} />
+            <ProductCard key={offer.id} offer={offer} onCTAClick={onCTATrigger} />
           ))}
         </div>
       </div>
@@ -477,7 +500,13 @@ function SocialProof({ onImageOpen }: { onImageOpen: (index: number) => void }) 
   );
 }
 
-function FinalCTA({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandler<HTMLAnchorElement> }) {
+function FinalCTA({
+  onJoinTrigger,
+  onConsultTrigger,
+}: {
+  onJoinTrigger: MouseEventHandler<HTMLAnchorElement>;
+  onConsultTrigger: MouseEventHandler<HTMLAnchorElement>;
+}) {
   return (
     <Section background="bg-gradient-to-r from-accent/20 via-accent/40 to-accent/20">
       <div className="relative">
@@ -509,10 +538,16 @@ function FinalCTA({ onWeChatTrigger }: { onWeChatTrigger: MouseEventHandler<HTML
             </ul>
           </div>
           <div className="flex flex-col gap-3">
-            <CTAButton href="#" onClick={onWeChatTrigger} className="justify-center text-base">
+            <CTAButton href="#" onClick={onJoinTrigger} className="justify-center text-base">
               立即加入 X 增长体系
             </CTAButton>
-            <CTAButton variant="secondary" href="#" onClick={onWeChatTrigger} className="justify-center text-base" icon={<ArrowRightIcon className="h-4 w-4" />}>
+            <CTAButton
+              variant="secondary"
+              href="#"
+              onClick={onConsultTrigger}
+              className="justify-center text-base"
+              icon={<ArrowRightIcon className="h-4 w-4" />}
+            >
               与团队预约 20 分钟策略电话
             </CTAButton>
           </div>
@@ -585,7 +620,17 @@ function SocialProofModal({
   );
 }
 
-function WeChatModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+function WeChatModal({
+  isOpen,
+  onClose,
+  imageSrc,
+  imageAlt,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  imageSrc: string;
+  imageAlt: string;
+}) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -615,12 +660,12 @@ function WeChatModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             <div className="space-y-4 text-center">
               <h3 className="text-2xl font-semibold">扫码添加企业微信</h3>
               <p className="text-sm text-white/70">
-                扫描下方二维码，备注“X 增长”，即可与熊老板一对一对接报名信息。
+                扫描下方二维码，购买后，置顶文章提供了加入增长社群的方法。
               </p>
               <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
                 <img
-                  src={WECHAT_QR_URL}
-                  alt="企业微信二维码"
+                  src={imageSrc}
+                  alt={imageAlt}
                   className="h-auto w-full rounded-xl object-contain"
                 />
               </div>
